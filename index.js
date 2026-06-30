@@ -299,7 +299,7 @@ async function run() {
 
     //single user by email
 
-    app.get("/api/users/:email", async (req, res) => {
+    app.get("/api/users-by-email/:email", async (req, res) => {
       const { email } = req.params;
 
       const result = await userCollection.findOne({
@@ -309,7 +309,7 @@ async function run() {
       res.send(result || {});
     });
 
-    // update profile
+    // Update Profile
 
     app.patch("/api/users/:email", async (req, res) => {
       const { email } = req.params;
