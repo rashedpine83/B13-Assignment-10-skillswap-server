@@ -52,6 +52,27 @@ async function run() {
     const proposalCollection = database.collection("proposals");
     const paymentCollection = database.collection("payments");
     const userCollection = database.collection("user");
+    const reviewCollection = database.collection("reviews");
+
+    //review relate api
+    app.post("/api/reviews", async (req, res) => {
+      try {
+        const review = req.body;
+
+        console.log("Received review:", review);
+
+        const result = await reviewCollection.insertOne(review);
+
+        res.send(result);
+      } catch (error) {
+        console.log("SERVER ERROR:", error);
+
+        res.status(500).send({
+          success: false,
+          message: error.message,
+        });
+      }
+    });
 
     // Task Relate API
     app.get("/api/tasks", async (req, res) => {
@@ -318,6 +339,24 @@ async function run() {
       console.log("Matched:", result);
 
       res.send(result);
+    });
+
+    app.get("/api/proposals/freelancer/:email", async (req, res) => {
+      try {
+        const email = req.params.email;
+
+        const result = await proposalCollection
+          .find({
+            freelancerEmailId: email,
+          })
+          .toArray();
+
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({
+          message: "Failed to load proposals",
+        });
+      }
     });
 
     app.get("/api/proposals/:taskId", async (req, res) => {
