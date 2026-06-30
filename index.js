@@ -28,11 +28,11 @@ const JWKS = createRemoteJWKSet(
 const verifyToken = async (req, res, next) => {
   const authHeader = req?.headers?.authorization;
   if (!authHeader) {
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ message: "Unauthorized1" });
   }
   const token = authHeader?.split(" ")[1];
   if (!token) {
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ message: "Unauthorized2" });
   }
 
   try {
@@ -177,7 +177,7 @@ async function run() {
       res.send(result);
     });
 
-    app.post("/api/tasks", async (req, res) => {
+    app.post("/api/tasks", verifyToken, async (req, res) => {
       try {
         const task = req.body;
         const newTask = {
@@ -311,7 +311,7 @@ async function run() {
 
     // update profile
 
-    app.patch("/api/users/:email", verifyToken, async (req, res) => {
+    app.patch("/api/users/:email", async (req, res) => {
       const { email } = req.params;
 
       const data = req.body;
