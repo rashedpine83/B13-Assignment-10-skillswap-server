@@ -58,7 +58,7 @@ async function run() {
       const { page = 1, limit = 12 } = req.query;
 
       const pageNum = Number(page);
-      console.log("Page Number:", pageNum);
+
       const limitNum = Number(limit);
       const skip = (pageNum - 1) * limitNum;
 
@@ -84,6 +84,11 @@ async function run() {
         })
         .toArray();
 
+      res.send(result);
+    });
+
+    app.get("/api/tasks/allTasks", async (req, res) => {
+      const result = await taskCollection.find().toArray();
       res.send(result);
     });
 
