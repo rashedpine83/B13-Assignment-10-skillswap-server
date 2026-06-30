@@ -53,8 +53,38 @@ async function run() {
     const paymentCollection = database.collection("payments");
     const userCollection = database.collection("user");
     const reviewCollection = database.collection("reviews");
+    const completedTaskCollection = database.collection("completedTasks");
+
+    //compeleted task relate api
+    app.get("/api/completed-tasks", async (req, res) => {
+      const result = await completedTaskCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/api/completed-tasks", async (req, res) => {
+      try {
+        const completedTask = req.body;
+        const result = await completedTaskCollection.insertOne(completedTask);
+        res.status(201).json({
+          success: true,
+          insertedId: result.insertedId,
+          message: "Completed task created successfully",
+        });
+      } catch (error) {
+        console.log("SERVER ERROR:", error);
+        res.status(500).json({
+          success: false,
+          message: error.message,
+        });
+      }
+    });
 
     //review relate api
+    app.get("/api/reviews", async (req, res) => {
+      const result = await reviewCollection.find().toArray();
+      res.send(result);
+    });
+
     app.post("/api/reviews", async (req, res) => {
       try {
         const review = req.body;
@@ -255,6 +285,16 @@ async function run() {
       const cursor = userCollection.find();
       const result = await cursor.toArray();
       res.send(result);
+    });
+
+    app.get("/api/users/:id", async (req, res) => {
+      const { id } = req.params;
+
+      const result = await userCollection.findOne({
+        _id: new ObjectId(id),
+      });
+
+      res.send(result || {});
     });
 
     //single user by email
